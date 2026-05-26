@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>佐野クラブ チェック表</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&family=Oswald:wght@700&display=swap');
+:root{--navy:#0a1628;--navy2:#132040;--gold:#f5a623;--gold2:#ffc84a;--red:#e63946;--green:#2dc653;--blue:#3a86ff;--gray:#8899aa;--light:#e8f0f8;--card:#162035;--border:#1e3050;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Noto Sans JP',sans-serif;background:var(--navy);color:#fff;min-height:100vh;padding-bottom:100px;}
+header{background:linear-gradient(135deg,var(--navy2),#0d1e38);border-bottom:3px solid var(--gold);padding:12px 16px;position:sticky;top:0;z-index:50;}
+.header-row{display:flex;align-items:center;gap:10px;}
+.logo{width:40px;height:40px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;font-family:'Oswald',sans-serif;font-size:16px;font-weight:700;color:var(--navy);flex-shrink:0;}
+.header-title h1{font-family:'Oswald',sans-serif;font-size:18px;color:var(--gold);letter-spacing:1px;}
+.header-title p{font-size:10px;color:var(--gray);margin-top:2px;}
+.tabs{display:flex;gap:3px;padding:10px 12px 0;background:var(--navy2);overflow-x:auto;}
+.tab{padding:8px 12px;border-radius:8px 8px 0 0;font-size:12px;font-weight:700;cursor:pointer;border:none;background:var(--navy);color:var(--gray);font-family:inherit;white-space:nowrap;transition:all 0.2s;}
+.tab.active{background:var(--card);color:var(--gold);border-top:2px solid var(--gold);}
+.section{display:none;padding:14px;}.section.active{display:block;}
+.section-title{font-size:12px;color:var(--gray);font-weight:700;letter-spacing:1px;margin-bottom:10px;}
+.meta-card{background:var(--card);border-radius:12px;padding:12px 14px;margin-bottom:12px;border:1px solid var(--border);display:flex;flex-wrap:wrap;gap:8px;align-items:center;}
+.meta-card label{font-size:11px;color:var(--gray);white-space:nowrap;}
+select,input[type=date],input[type=text]{background:var(--navy2);border:1px solid var(--border);color:#fff;padding:7px 10px;border-radius:8px;font-size:12px;font-family:inherit;}
+select:focus,input:focus{outline:2px solid var(--gold);}
+textarea{background:var(--navy2);border:1px solid var(--border);color:#fff;border-radius:8px;padding:8px 10px;font-size:12px;font-family:inherit;width:100%;resize:none;}
+textarea:focus{outline:2px solid var(--gold);}
+.legend{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;}
+.leg{display:flex;align-items:center;gap:4px;font-size:10px;color:var(--gray);}
+.leg-dot{width:20px;height:20px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;}
+.player-block{background:var(--card);border-radius:12px;margin-bottom:12px;overflow:hidden;border:1px solid var(--border);}
+.player-header{display:flex;align-items:center;gap:10px;padding:10px 14px;background:linear-gradient(90deg,#1a2a3a,var(--card));border-left:4px solid var(--gold);}
+.player-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold2));display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--navy);font-size:13px;flex-shrink:0;}
+.player-name-text{font-size:14px;font-weight:700;}.player-grade-text{font-size:10px;color:var(--gray);}
+.player-total{margin-left:auto;font-family:'Oswald',sans-serif;font-size:20px;color:var(--gold);font-weight:700;}
+.player-total span{font-size:10px;color:var(--gray);}
+.check-grid{background:var(--border);display:grid;gap:1px;}
+.check-row{display:flex;align-items:center;background:var(--navy);padding:9px 14px;gap:8px;}
+.check-label{font-size:12px;flex:1;color:var(--light);}
+.score-btns{display:flex;gap:4px;}
+.score-btn{width:34px;height:34px;border-radius:8px;border:1px solid var(--border);font-size:13px;font-weight:700;cursor:pointer;background:var(--navy2);color:var(--gray);transition:all 0.15s;display:flex;align-items:center;justify-content:center;}
+.score-btn:hover{transform:scale(1.1);}
+.score-btn.sel-maru2{background:#7c3aed;color:#fff;border-color:#7c3aed;box-shadow:0 0 8px #7c3aed88;}
+.score-btn.sel-maru{background:var(--gold);color:var(--navy);border-color:var(--gold);box-shadow:0 0 8px #f5a62388;}
+.score-btn.sel-sankaku{background:#60a5fa;color:var(--navy);border-color:#60a5fa;}
+.score-btn.sel-batsu{background:var(--red);color:#fff;border-color:var(--red);}
+.comment-row{padding:8px 14px;background:var(--navy);border-top:1px solid var(--border);}
+.comment-row textarea{height:46px;font-size:11px;}
+.pdf-btn{width:100%;padding:14px;background:linear-gradient(90deg,var(--gold),var(--gold2));color:var(--navy);border:none;border-radius:10px;font-size:15px;font-weight:900;font-family:inherit;cursor:pointer;margin-top:14px;box-shadow:0 4px 15px rgba(245,166,35,0.35);letter-spacing:1px;}
+.pdf-btn:active{transform:scale(0.97);}
+.save-html-btn{width:100%;padding:12px;background:var(--navy2);color:var(--gold);border:2px solid var(--gold);border-radius:10px;font-size:13px;font-weight:900;font-family:inherit;cursor:pointer;margin-top:10px;letter-spacing:1px;}
+.save-html-btn:active{transform:scale(0.97);}
+.add-btn{padding:8px 16px;background:var(--gold);color:var(--navy);border:none;border-radius:8px;font-weight:700;cursor:pointer;font-family:inherit;font-size:13px;}
+.edit-btn{background:none;border:1px solid var(--gold);color:var(--gold);border-radius:6px;padding:3px 7px;font-size:10px;cursor:pointer;margin-right:4px;}
+.del-btn{background:none;border:1px solid var(--red);color:var(--red);border-radius:6px;padding:3px 7px;font-size:10px;cursor:pointer;}
+.save-edit-btn{padding:6px 12px;background:var(--gold);color:var(--navy);border:none;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;flex:1;}
+.cancel-edit-btn{padding:6px 12px;background:none;color:var(--gray);border:1px solid var(--border);border-radius:6px;font-size:11px;cursor:pointer;font-family:inherit;flex:1;}
+.add-form{background:var(--card);border-radius:12px;padding:14px;margin-bottom:12px;border:1px solid var(--border);display:flex;flex-wrap:wrap;gap:8px;align-items:center;}
+.add-form input,.add-form select{flex:1;min-width:120px;}
+.player-card{display:flex;align-items:center;gap:10px;background:var(--card);border-radius:10px;padding:10px 14px;border:1px solid var(--border);margin-bottom:8px;}
+.player-card-info{flex:1;}.player-card-name{font-size:14px;font-weight:700;}.player-card-grade{font-size:11px;color:var(--gray);}
+.player-edit-form{display:flex;gap:6px;flex-wrap:wrap;align-items:center;flex:1;}
+.player-edit-form input{flex:1;min-width:100px;padding:5px 8px;font-size:12px;}
+.player-edit-form select{padding:5px 6px;font-size:12px;}
+.item-block{background:var(--card);border-radius:12px;margin-bottom:12px;overflow:hidden;border:1px solid var(--border);}
+.item-block-header{padding:10px 14px;font-weight:700;font-size:13px;display:flex;align-items:center;gap:8px;}
+.item-row{display:flex;align-items:center;background:var(--navy);padding:10px 14px;gap:8px;border-top:1px solid var(--border);}
+.item-label-text{font-size:12px;flex:1;color:var(--light);}
+.item-edit-form{display:flex;flex-direction:column;gap:6px;padding:10px 14px;background:var(--navy);border-top:1px solid var(--border);}
+.item-edit-form input{width:100%;padding:6px 10px;font-size:12px;}
+.item-edit-btns{display:flex;gap:8px;}
+.empty-msg{text-align:center;color:var(--gray);padding:24px;font-size:13px;}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:var(--navy2);border-top:1px solid var(--border);display:flex;z-index:100;}
+.nav-btn{flex:1;padding:10px 4px 8px;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;border:none;background:none;color:var(--gray);font-size:9px;font-family:inherit;}
+.nav-btn.active{color:var(--gold);}.nav-btn .icon{font-size:20px;}
+.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--green);color:var(--navy);padding:10px 22px;border-radius:20px;font-weight:700;font-size:13px;opacity:0;transition:all 0.3s;pointer-events:none;z-index:999;white-space:nowrap;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+@media print{
+  body{background:#fff;color:#000;padding:0;}
+  header,.tabs,.bottom-nav,.pdf-btn,.save-html-btn,.meta-card,.legend,.section:not(.active){display:none!important;}
+  .section.active{display:block!important;padding:0;}
+  .print-header{display:block!important;text-align:center;margin-bottom:12pt;border-bottom:2pt solid #000;padding-bottom:8pt;}
+  .print-meta{display:flex!important;gap:20pt;font-size:10pt;margin-bottom:12pt;flex-wrap:wrap;}
+  .player-block{background:#fff;border:1pt solid #ccc;margin-bottom:10pt;border-radius:0;page-break-inside:avoid;}
+  .player-header{background:#f0f0f0!important;border-left:3pt solid #000!important;padding:6pt 10pt;}
+  .player-avatar{background:#ddd!important;color:#000!important;}
+  .player-name-text{color:#000;font-size:12pt;}.player-grade-text{color:#555;}.player-total{color:#000!important;}
+  .check-grid{background:#ccc;}
+  .check-row{background:#fff;padding:5pt 10pt;}
+  .check-label{color:#000;font-size:10pt;}
+  .score-btn{width:22pt;height:22pt;font-size:10pt;background:#fff!important;color:#000!important;border:1pt solid #999!important;box-shadow:none!important;}
+  .score-btn.sel-maru2{background:#e8d5ff!important;border-color:#7c3aed!important;}
+  .score-btn.sel-maru{background:#fff3cd!important;border-color:#f5a623!important;}
+  .score-btn.sel-sankaku{background:#dbeafe!important;border-color:#60a5fa!important;}
+  .score-btn.sel-batsu{background:#fee2e2!important;border-color:#e63946!important;}
+  .comment-row{background:#fff;}
+  .comment-row textarea{background:#fff;color:#000;border:1pt solid #ccc;font-size:9pt;}
+}
+.print-header{display:none;}.print-meta{display:none;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-row">
+    <div class="logo">佐野</div>
+    <div class="header-title">
+      <h1>SANO CLUB チェック表</h1>
+      <p>コーチ用 姿勢・態度チェックシート</p>
+    </div>
+  </div>
+</header>
+
+<div class="tabs">
+  <button class="tab active" onclick="showTab('practice',this)">🏋️ 練習</button>
+  <button class="tab" onclick="showTab('game',this)">🏀 試合</button>
+  <button class="tab" onclick="showTab('players',this)">👤 選手</button>
+  <button class="tab" onclick="showTab('items',this)">⚙️ 項目</button>
+</div>
+
+<!-- 練習 -->
+<div id="sec-practice" class="section active">
+  <div class="print-header"><h2 style="font-size:16pt;font-weight:900">佐野クラブ 男子　練習チェック表</h2></div>
+  <div class="print-meta"><span id="pm-date-p"></span><span id="pm-coach-p"></span></div>
+  <div class="meta-card">
+    <label>日付</label><input type="date" id="date-p">
+    <label>担当</label><input type="text" id="coach-p" placeholder="コーチ名" style="width:100px">
+  </div>
+  <div class="legend">
+    <div class="leg"><div class="leg-dot" style="background:#7c3aed;color:#fff">◎</div>かなりできた</div>
+    <div class="leg"><div class="leg-dot" style="background:var(--gold);color:var(--navy)">○</div>できた</div>
+    <div class="leg"><div class="leg-dot" style="background:#60a5fa;color:var(--navy)">△</div>意識あり</div>
+    <div class="leg"><div class="leg-dot" style="background:var(--red);color:#fff">×</div>できてない</div>
+  </div>
+  <p class="section-title">📋 選手ごとにチェック</p>
+  <div id="players-practice"></div>
+  <button class="pdf-btn" onclick="printSheet('practice')">📄 PDFを作成してLINEで送る</button>
+  <button class="save-html-btn" onclick="saveHTML()">💾 データを保存する（HTMLダウンロード）</button>
+</div>
+
+<!-- 試合 -->
+<div id="sec-game" class="section">
+  <div class="print-header"><h2 style="font-size:16pt;font-weight:900">佐野クラブ 男子　試合チェック表</h2></div>
+  <div class="print-meta"><span id="pm-date-g"></span><span id="pm-coach-g"></span><span id="pm-opp-g"></span></div>
+  <div class="meta-card">
+    <label>日付</label><input type="date" id="date-g">
+    <label>担当</label><input type="text" id="coach-g" placeholder="コーチ名" style="width:100px">
+    <label>相手</label><input type="text" id="opponent-g" placeholder="相手チーム名" style="width:110px">
+  </div>
+  <div class="legend">
+    <div class="leg"><div class="leg-dot" style="background:#7c3aed;color:#fff">◎</div>かなりできた</div>
+    <div class="leg"><div class="leg-dot" style="background:var(--gold);color:var(--navy)">○</div>できた</div>
+    <div class="leg"><div class="leg-dot" style="background:#60a5fa;color:var(--navy)">△</div>意識あり</div>
+    <div class="leg"><div class="leg-dot" style="background:var(--red);color:#fff">×</div>できてない</div>
+  </div>
+  <p class="section-title">📋 選手ごとにチェック</p>
+  <div id="players-game"></div>
+  <button class="pdf-btn" onclick="printSheet('game')">📄 PDFを作成してLINEで送る</button>
+  <button class="save-html-btn" onclick="saveHTML()">💾 データを保存する（HTMLダウンロード）</button>
+</div>
+
+<!-- 選手管理 -->
+<div id="sec-players" class="section">
+  <p class="section-title">👤 選手管理</p>
+  <div class="add-form">
+    <input type="text" id="newName" placeholder="名前（例：山田 太郎）" style="flex:2;min-width:140px">
+    <select id="newGrade" style="min-width:80px">
+      <option value="1">1年生</option><option value="2">2年生</option>
+      <option value="3">3年生</option><option value="4">4年生</option>
+      <option value="5" selected>5年生</option><option value="6">6年生</option>
+    </select>
+    <button class="add-btn" onclick="addPlayer()">＋追加</button>
+  </div>
+  <div id="playerList"></div>
+  <button class="save-html-btn" onclick="saveHTML()">💾 データを保存する（HTMLダウンロード）</button>
+</div>
+
+<!-- 項目設定 -->
+<div id="sec-items" class="section">
+  <p class="section-title">⚙️ 項目の編集・追加</p>
+  <p style="font-size:11px;color:var(--gray);margin-bottom:14px">✏️で名前を編集、削除で取り除けます。</p>
+  <div class="item-block">
+    <div class="item-block-header" style="background:linear-gradient(90deg,#1a3a5c,var(--card));border-left:4px solid var(--blue)">🏋️ 練習チェック項目</div>
+    <div id="practice-item-list"></div>
+  </div>
+  <div class="item-block">
+    <div class="item-block-header" style="background:linear-gradient(90deg,#3a1e1e,var(--card));border-left:4px solid var(--red)">🏀 試合チェック項目</div>
+    <div id="game-item-list"></div>
+  </div>
+  <div style="background:var(--card);border-radius:12px;padding:14px;border:1px solid var(--border);margin-top:4px">
+    <p style="font-size:12px;font-weight:700;color:var(--gray);margin-bottom:10px">➕ 新しい項目を追加</p>
+    <select id="newItemMode" style="width:100%;margin-bottom:8px">
+      <option value="practice">🏋️ 練習用に追加</option>
+      <option value="game">🏀 試合用に追加</option>
+    </select>
+    <input type="text" id="newItemLabel" placeholder="項目名（例：切り替えが早い）" style="width:100%;margin-bottom:8px">
+    <button class="add-btn" style="width:100%" onclick="addItem()">＋ 追加する</button>
+  </div>
+  <button class="save-html-btn" onclick="saveHTML()">💾 データを保存する（HTMLダウンロード）</button>
+</div>
+
+<nav class="bottom-nav">
+  <button class="nav-btn active" onclick="showTab('practice',this)"><span class="icon">🏋️</span>練習</button>
+  <button class="nav-btn" onclick="showTab('game',this)"><span class="icon">🏀</span>試合</button>
+  <button class="nav-btn" onclick="showTab('players',this)"><span class="icon">👤</span>選手</button>
+  <button class="nav-btn" onclick="showTab('items',this)"><span class="icon">⚙️</span>項目</button>
+</nav>
+<div class="toast" id="toast"></div>
+
+<!-- 埋め込みデータ（saveHTMLで自動更新） -->
+<script id="embedded-data" type="application/json">
+__EMBEDDED_DATA__
+</script>
+
+<script>
+const SYMS = ['◎','○','△','×'];
+const SYM_CLASS = {'◎':'sel-maru2','○':'sel-maru','△':'sel-sankaku','×':'sel-batsu'};
+const POINTS = {'◎':3,'○':2,'△':1,'×':0};
+
+const DEFAULT_PRACTICE = [
+  '練習態度（真剣に取り組んでいるか）',
+  '話を聞いているか（コーチの指示を聞けているか）',
+  '返事（はっきり返事できているか）',
+  '言葉がけ（仲間への声かけ・励まし）',
+  '集中（練習中ずっと集中できているか）',
+];
+const DEFAULT_GAME = [
+  '試合への姿勢（本気で戦えているか）',
+  '話を聞いているか（ベンチでの指示を聞けているか）',
+  '返事・反応（コーチへの返事がはっきりしているか）',
+  '言葉がけ（仲間への声かけ・励まし）',
+  '集中（プレー・ベンチ中の集中）',
+  '切り替え（ミス後の立て直し）',
+  'チームプレー（仲間と協力できているか）',
+];
+
+let players, practiceItems, gameItems, scores;
+
+function saveToLocal(){
+  try{
+    const data = {
+      players,
+      practiceItems,
+      gameItems,
+      scores,
+      practiceDate: document.getElementById('date-p')?.value || '',
+      gameDate: document.getElementById('date-g')?.value || '',
+      practiceCoach: document.getElementById('coach-p')?.value || '',
+      gameCoach: document.getElementById('coach-g')?.value || '',
+      opponent: document.getElementById('opponent-g')?.value || ''
+    };
+    localStorage.setItem('sanoChecklistData', JSON.stringify(data));
+  }catch(e){}
+}
+
+function loadFromLocal(){
+  try{
+    const raw = localStorage.getItem('sanoChecklistData');
+    if(!raw) return false;
+    const d = JSON.parse(raw);
+    players = d.players || [];
+    practiceItems = d.practiceItems || [...DEFAULT_PRACTICE];
+    gameItems = d.gameItems || [...DEFAULT_GAME];
+    scores = d.scores || {practice:{},game:{}};
+
+    setTimeout(()=>{
+      if(document.getElementById('date-p')) document.getElementById('date-p').value = d.practiceDate || '';
+      if(document.getElementById('date-g')) document.getElementById('date-g').value = d.gameDate || '';
+      if(document.getElementById('coach-p')) document.getElementById('coach-p').value = d.practiceCoach || '';
+      if(document.getElementById('coach-g')) document.getElementById('coach-g').value = d.gameCoach || '';
+      if(document.getElementById('opponent-g')) document.getElementById('opponent-g').value = d.opponent || '';
+    },0);
+
+    return true;
+  }catch(e){
+    return false;
+  }
+}
+
+// 埋め込みデータ or デフォルト
+function loadEmbedded(){
+  try{
+    const raw = document.getElementById('embedded-data').textContent.trim();
+    if(raw && raw !== '__EMBEDDED_DATA__'){
+      const d = JSON.parse(raw);
+      players       = d.players       || [];
+      practiceItems = d.practiceItems || [...DEFAULT_PRACTICE];
+      gameItems     = d.gameItems     || [...DEFAULT_GAME];
+      scores        = d.scores        || {practice:{},game:{}};
+      return;
+    }
+  }catch(e){}
+  players       = [];
+  practiceItems = [...DEFAULT_PRACTICE];
+  gameItems     = [...DEFAULT_GAME];
+  scores        = {practice:{},game:{}};
+}
+
+window.addEventListener('DOMContentLoaded',()=>{
+  const today = new Date().toISOString().slice(0,10);
+  loadEmbedded();
+
+  if(!loadFromLocal()){
+    document.getElementById('date-p').value = today;
+    document.getElementById('date-g').value = today;
+  }
+
+  ['date-p','date-g','coach-p','coach-g','opponent-g'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el){
+      el.addEventListener('input',saveToLocal);
+      el.addEventListener('change',saveToLocal);
+    }
+  });
+
+  renderCheckSheets();
+  renderPlayerList();
+  renderItemSettings();
+});
+
+// ===== 保存（HTMLダウンロード） =====
+function saveHTML(){
+  const data = {players, practiceItems, gameItems, scores};
+  const json = JSON.stringify(data);
+  // 現在のHTMLを取得してデータを埋め込む
+  const html = document.documentElement.outerHTML;
+  const updated = html.replace(
+    /(<script id="embedded-data"[^>]*>)([\s\S]*?)(<\/script>)/,
+    `$1\n${json}\n$3`
+  );
+  const blob = new Blob([updated], {type:'text/html'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `sano_checklist_${new Date().toISOString().slice(0,10)}.html`;
+  a.click();
+  showToast('💾 保存しました！新しいHTMLを使ってください');
+}
+
+// ===== タブ =====
+function showTab(name,btn){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.tab,.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('sec-'+name).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ===== チェックシート =====
+function renderCheckSheets(){
+  renderSheet('practice',practiceItems,'players-practice');
+  renderSheet('game',gameItems,'players-game');
+}
+
+function renderSheet(mode,items,cid){
+  const container = document.getElementById(cid);
+  container.innerHTML='';
+  if(!players.length){ container.innerHTML='<div class="empty-msg">👤 「選手」タブから選手を登録してください</div>'; return; }
+  if(!items.length){ container.innerHTML='<div class="empty-msg">⚙️ 「項目」タブからチェック項目を追加してください</div>'; return; }
+  players.forEach(p=>{
+    if(!scores[mode][p.id]) scores[mode][p.id]={};
+    const total = calcTotal(mode,p.id,items.length);
+    const block = document.createElement('div');
+    block.className='player-block'; block.id=`blk-${mode}-${p.id}`;
+    block.innerHTML=`
+      <div class="player-header">
+        <div class="player-avatar">${p.name.slice(0,1)}</div>
+        <div style="flex:1"><div class="player-name-text">${p.name}</div><div class="player-grade-text">${p.grade}年生</div></div>
+        <div class="player-total" id="tot-${mode}-${p.id}">${total!==null?total+'%':'--'}<span> 総合</span></div>
+      </div>
+      <div class="check-grid">
+        ${items.map((item,idx)=>`
+          <div class="check-row">
+            <div class="check-label">${item}</div>
+            <div class="score-btns">
+              ${SYMS.map(s=>`<button class="score-btn ${scores[mode][p.id][idx]===s?SYM_CLASS[s]:''}" onclick="setSym('${mode}','${p.id}',${idx},'${s}')">${s}</button>`).join('')}
+            </div>
+          </div>`).join('')}
+      </div>
+      <div class="comment-row">
+        <textarea placeholder="コメント（気になった点など）" onchange="setComment('${mode}','${p.id}',this.value)">${scores[mode][p.id]._comment||''}</textarea>
+      </div>`;
+    container.appendChild(block);
+  });
+}
+
+function setSym(mode,pid,idx,sym){
+  if(!scores[mode][pid]) scores[mode][pid]={};
+  scores[mode][pid][idx] = scores[mode][pid][idx]===sym ? undefined : sym;
+  const block = document.getElementById(`blk-${mode}-${pid}`);
+  block.querySelectorAll('.check-row')[idx].querySelectorAll('.score-btn').forEach(b=>{
+    b.className='score-btn';
+    if(scores[mode][pid][idx]===b.textContent.trim()) b.classList.add(SYM_CLASS[b.textContent.trim()]);
+  });
+  const items = mode==='practice'?practiceItems:gameItems;
+  const t = calcTotal(mode,pid,items.length);
+  document.getElementById(`tot-${mode}-${pid}`).innerHTML=`${t!==null?t+'%':'--'}<span> 総合</span>`;saveToLocal();
+}
+
+function setComment(mode,pid,val){
+  if(!scores[mode][pid]) scores[mode][pid]={};
+  scores[mode][pid]._comment=val;saveToLocal();
+}
+
+function calcTotal(mode,pid,count){
+  const sc=scores[mode][pid]||{};
+  let total=0,n=0;
+  for(let i=0;i<count;i++){ if(sc[i]!==undefined){ total+=POINTS[sc[i]]; n++; } }
+  return n===0?null:Math.round(total/(n*3)*100);
+}
+
+// ===== 選手管理 =====
+function renderPlayerList(editId=null){
+  const list=document.getElementById('playerList');
+  list.innerHTML='';
+  if(!players.length){ list.innerHTML='<div class="empty-msg">まだ選手が登録されていません</div>'; return; }
+  players.forEach(p=>{
+    const div=document.createElement('div'); div.className='player-card';
+    if(editId===p.id){
+      div.innerHTML=`<div class="player-avatar">${p.name.slice(0,1)}</div>
+        <div class="player-edit-form">
+          <input type="text" id="en-${p.id}" value="${p.name}">
+          <select id="eg-${p.id}">${[1,2,3,4,5,6].map(g=>`<option value="${g}"${p.grade===g?' selected':''}>${g}年</option>`).join('')}</select>
+          <button class="save-edit-btn" onclick="savePlayer('${p.id}')">保存</button>
+          <button class="cancel-edit-btn" onclick="renderPlayerList()">取消</button>
+        </div>`;
+    } else {
+      div.innerHTML=`<div class="player-avatar">${p.name.slice(0,1)}</div>
+        <div class="player-card-info"><div class="player-card-name">${p.name}</div><div class="player-card-grade">${p.grade}年生</div></div>
+        <button class="edit-btn" onclick="renderPlayerList('${p.id}')">✏️編集</button>
+        <button class="del-btn" onclick="deletePlayer('${p.id}')">削除</button>`;
+    }
+    list.appendChild(div);
+  });
+}
+
+function addPlayer(){
+  const name=document.getElementById('newName').value.trim();
+  const grade=parseInt(document.getElementById('newGrade').value);
+  if(!name){ showToast('⚠ 名前を入力してください'); return; }
+  if(players.find(p=>p.name===name)){ showToast('⚠ 同じ名前が既にいます'); return; }
+  players.push({id:'p'+Date.now(),name,grade});
+  document.getElementById('newName').value='';
+  renderPlayerList(); renderCheckSheets();
+  saveToLocal();showToast(`✅ ${name} を追加しました`);
+}
+
+function savePlayer(id){
+  const name=document.getElementById('en-'+id).value.trim();
+  const grade=parseInt(document.getElementById('eg-'+id).value);
+  if(!name){ showToast('⚠ 名前を入力してください'); return; }
+  if(players.find(p=>p.name===name&&p.id!==id)){ showToast('⚠ 同じ名前が既にいます'); return; }
+  const p=players.find(p=>p.id===id); p.name=name; p.grade=grade;
+  renderPlayerList(); renderCheckSheets();
+  saveToLocal();showToast(`✅ ${name} に更新しました`);
+}
+
+function deletePlayer(id){
+  if(!confirm('この選手を削除しますか？')) return;
+  players=players.filter(p=>p.id!==id);
+  renderPlayerList(); renderCheckSheets(); saveToLocal(); showToast('削除しました');
+}
+
+// ===== 項目設定 =====
+function renderItemSettings(editKey=null){
+  renderItemList('practice',practiceItems,'practice-item-list',editKey);
+  renderItemList('game',gameItems,'game-item-list',editKey);
+}
+
+function renderItemList(mode,items,cid,editKey){
+  const container=document.getElementById(cid);
+  container.innerHTML='';
+  if(!items.length){ container.innerHTML='<div class="empty-msg" style="padding:10px;font-size:12px">項目なし</div>'; return; }
+  items.forEach((item,idx)=>{
+    const key=`${mode}-${idx}`;
+    if(editKey===key){
+      const div=document.createElement('div'); div.className='item-edit-form';
+      div.innerHTML=`<div style="font-size:10px;color:var(--gray);font-weight:700">項目名を編集</div>
+        <input type="text" id="ei-${key}" value="${item}">
+        <div class="item-edit-btns">
+          <button class="save-edit-btn" onclick="saveItem('${mode}',${idx},'${key}')">💾 保存</button>
+          <button class="cancel-edit-btn" onclick="renderItemSettings()">取消</button>
+        </div>`;
+      container.appendChild(div);
+    } else {
+      const div=document.createElement('div'); div.className='item-row';
+      div.innerHTML=`<div class="item-label-text">${item}</div>
+        <button class="edit-btn" onclick="renderItemSettings('${key}')">✏️</button>
+        <button class="del-btn" onclick="deleteItem('${mode}',${idx})">削除</button>`;
+      container.appendChild(div);
+    }
+  });
+}
+
+function saveItem(mode,idx,key){
+  const val=document.getElementById('ei-'+key).value.trim();
+  if(!val){ showToast('⚠ 項目名を入力してください'); return; }
+  if(mode==='practice') practiceItems[idx]=val; else gameItems[idx]=val;
+  renderItemSettings(); renderCheckSheets();
+  saveToLocal();showToast(`✅「${val}」に更新しました`);
+}
+
+function deleteItem(mode,idx){
+  const items=mode==='practice'?practiceItems:gameItems;
+  if(!confirm(`「${items[idx]}」を削除しますか？`)) return;
+  items.splice(idx,1);
+  renderItemSettings(); renderCheckSheets(); saveToLocal(); showToast('削除しました');
+}
+
+function addItem(){
+  const mode=document.getElementById('newItemMode').value;
+  const label=document.getElementById('newItemLabel').value.trim();
+  if(!label){ showToast('⚠ 項目名を入力してください'); return; }
+  if(mode==='practice') practiceItems.push(label); else gameItems.push(label);
+  document.getElementById('newItemLabel').value='';
+  renderItemSettings(); renderCheckSheets();
+  saveToLocal();showToast(`✅「${label}」を追加しました`);
+}
+
+// ===== PDF =====
+function printSheet(mode){
+  const sfx=mode==='practice'?'p':'g';
+  document.getElementById('pm-date-'+sfx).textContent=`日付：${document.getElementById('date-'+sfx).value}`;
+  document.getElementById('pm-coach-'+sfx).textContent=`担当：${document.getElementById('coach-'+sfx).value||'未設定'}`;
+  if(mode==='game'){
+    const opp=document.getElementById('opponent-g').value;
+    document.getElementById('pm-opp-g').textContent=opp?`対戦相手：${opp}`:'';
+  }
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.getElementById('sec-'+mode).classList.add('active');
+  setTimeout(()=>window.print(),100);
+}
+
+// ===== TOAST =====
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2200);
+}
+</script>
+</body>
+</html>
