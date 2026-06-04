@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>佐野クラブ チェック表</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&family=Oswald:wght@700&display=swap');
+:root{
+  --navy:#0d1f3c;--navy2:#162645;--gold:#f5a623;--gold2:#ffc84a;
+  --red:#ff4d5e;--green:#00d26a;--blue:#4d9fff;--purple:#9b6dff;
+  --gray:#a0b0c8;--light:#f0f4ff;--card:#1a2f52;--border:#2a4070;
+  --text:#f0f4ff;--text2:#c8d8f0;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Noto Sans JP',sans-serif;background:var(--navy);color:var(--text);min-height:100vh;padding-bottom:100px;}
+
+header{background:linear-gradient(135deg,var(--navy2),#0d1e38);border-bottom:3px solid var(--gold);padding:12px 16px;position:sticky;top:0;z-index:50;box-shadow:0 2px 12px rgba(0,0,0,.5);}
+.hrow{display:flex;align-items:center;gap:10px;}
+.logo{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold2));display:flex;align-items:center;justify-content:center;font-family:'Oswald',sans-serif;font-size:17px;font-weight:700;color:#0d1f3c;flex-shrink:0;}
+.htitle h1{font-family:'Oswald',sans-serif;font-size:18px;color:var(--gold);letter-spacing:2px;}
+.htitle p{font-size:11px;color:var(--gray);margin-top:2px;}
+.coach-badge{margin-left:auto;background:var(--card);border:1px solid var(--border);border-radius:20px;padding:5px 12px;font-size:12px;color:var(--gold);font-weight:700;white-space:nowrap;}
+
+.tabs{display:flex;gap:3px;padding:10px 12px 0;background:var(--navy2);overflow-x:auto;}
+.tab{padding:8px 14px;border-radius:8px 8px 0 0;font-size:12px;font-weight:700;cursor:pointer;border:none;background:var(--navy);color:var(--gray);font-family:inherit;white-space:nowrap;transition:all .2s;}
+.tab.active{background:var(--card);color:var(--gold);border-top:2px solid var(--gold);}
+
+.section{display:none;padding:14px;}.section.active{display:block;}
+.sec-title{font-size:11px;color:var(--gray);font-weight:700;letter-spacing:2px;margin-bottom:12px;}
+.card{background:var(--card);border-radius:14px;padding:14px;margin-bottom:12px;border:1px solid var(--border);box-shadow:0 2px 8px rgba(0,0,0,.3);}
+.card-title{font-size:12px;color:var(--gray);font-weight:700;margin-bottom:8px;letter-spacing:1px;}
+
+select,input[type=date],input[type=text]{background:var(--navy);border:1px solid var(--border);color:var(--text);padding:9px 12px;border-radius:10px;font-size:13px;font-family:inherit;width:100%;}
+select:focus,input:focus{outline:2px solid var(--gold);border-color:var(--gold);}
+textarea{background:var(--navy);border:1px solid var(--border);color:var(--text);border-radius:10px;padding:9px 12px;font-size:12px;font-family:inherit;width:100%;resize:none;}
+textarea:focus{outline:2px solid var(--gold);}
+
+.legend{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;}
+.leg{display:flex;align-items:center;gap:4px;font-size:11px;color:var(--text2);}
+.leg-dot{width:22px;height:22px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;}
+
+.player-block{background:var(--card);border-radius:14px;margin-bottom:14px;overflow:hidden;border:1px solid var(--border);}
+.player-header{display:flex;align-items:center;gap:10px;padding:12px 14px;background:linear-gradient(90deg,rgba(77,159,255,.15),transparent);border-left:4px solid var(--gold);}
+.pava{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold2));display:flex;align-items:center;justify-content:center;font-weight:700;color:#0d1f3c;font-size:14px;flex-shrink:0;}
+.player-name-text{font-size:15px;font-weight:700;color:var(--text);}
+.player-grade-text{font-size:11px;color:var(--gray);}
+.player-total{margin-left:auto;font-family:'Oswald',sans-serif;font-size:22px;font-weight:700;color:var(--gold);}
+.player-total span{font-size:10px;color:var(--gray);}
+.check-grid{display:grid;gap:1px;background:var(--border);}
+.check-row{display:flex;align-items:center;background:var(--navy2);padding:10px 14px;gap:10px;}
+.check-label{font-size:13px;flex:1;color:var(--text);font-weight:500;}
+.score-btns{display:flex;gap:5px;}
+.sb{width:38px;height:38px;border-radius:8px;border:1px solid var(--border);font-size:14px;font-weight:700;cursor:pointer;background:var(--navy);color:var(--gray);transition:all .15s;display:flex;align-items:center;justify-content:center;}
+.sb:hover{transform:scale(1.1);}
+.s-maru2{background:var(--purple)!important;color:#fff!important;border-color:var(--purple)!important;box-shadow:0 0 8px rgba(155,109,255,.5);}
+.s-maru{background:var(--gold)!important;color:#0d1f3c!important;border-color:var(--gold)!important;}
+.s-sankaku{background:var(--blue)!important;color:#fff!important;border-color:var(--blue)!important;}
+.s-batsu{background:var(--red)!important;color:#fff!important;border-color:var(--red)!important;}
+.comment-row{padding:10px 14px;background:var(--navy2);border-top:1px solid var(--border);}
+.comment-row textarea{height:44px;font-size:12px;}
+
+.btn{width:100%;padding:14px;border:none;border-radius:12px;font-size:14px;font-weight:900;font-family:inherit;cursor:pointer;margin-top:10px;letter-spacing:1px;transition:all .2s;}
+.btn:active{transform:scale(.97);}
+.btn-gold{background:linear-gradient(90deg,var(--gold),var(--gold2));color:#0d1f3c;box-shadow:0 4px 15px rgba(245,166,35,.4);}
+.btn-outline{background:transparent;color:var(--gold);border:2px solid var(--gold)!important;}
+.btn-green{background:linear-gradient(90deg,var(--green),#4ade80);color:#0d1f3c;}
+
+.add-btn{padding:10px 18px;background:var(--gold);color:#0d1f3c;border:none;border-radius:10px;font-weight:700;cursor:pointer;font-family:inherit;font-size:13px;}
+.edit-btn{background:transparent;border:1px solid var(--blue);color:var(--blue);border-radius:6px;padding:4px 8px;font-size:11px;cursor:pointer;margin-right:4px;}
+.del-btn{background:transparent;border:1px solid var(--red);color:var(--red);border-radius:6px;padding:4px 8px;font-size:11px;cursor:pointer;}
+.save-edit-btn{padding:7px 14px;background:var(--gold);color:#0d1f3c;border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;flex:1;}
+.cancel-edit-btn{padding:7px 14px;background:transparent;color:var(--gray);border:1px solid var(--border);border-radius:8px;font-size:12px;cursor:pointer;font-family:inherit;flex:1;}
+
+.add-form{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;}
+.add-form input,.add-form select{flex:1;min-width:120px;width:auto;}
+.pcard{display:flex;align-items:center;gap:10px;background:var(--card);border-radius:12px;padding:12px 14px;border:1px solid var(--border);margin-bottom:8px;}
+.pcard-info{flex:1;}
+.pcard-name{font-size:14px;font-weight:700;color:var(--text);}
+.pcard-grade{font-size:11px;color:var(--gray);}
+.pedit-form{display:flex;gap:6px;flex-wrap:wrap;align-items:center;flex:1;}
+.pedit-form input{flex:1;min-width:100px;padding:6px 10px;font-size:12px;}
+.pedit-form select{padding:6px 8px;font-size:12px;width:auto;}
+
+.item-block{background:var(--card);border-radius:12px;margin-bottom:12px;overflow:hidden;border:1px solid var(--border);}
+.item-block-header{padding:10px 14px;font-weight:700;font-size:13px;background:linear-gradient(90deg,rgba(77,159,255,.1),transparent);border-left:4px solid var(--blue);color:var(--text);}
+.item-row{display:flex;align-items:center;background:var(--navy2);padding:10px 14px;gap:8px;border-top:1px solid var(--border);}
+.item-label-text{font-size:13px;flex:1;color:var(--text);}
+.item-edit-form{display:flex;flex-direction:column;gap:6px;padding:10px 14px;background:var(--navy2);border-top:1px solid var(--border);}
+.item-edit-form input{width:100%;padding:7px 10px;font-size:13px;}
+.item-edit-btns{display:flex;gap:8px;}
+
+/* 自動保存バー */
+.save-bar{position:fixed;bottom:60px;left:0;right:0;background:var(--navy2);border-top:1px solid var(--border);padding:6px 16px;display:flex;align-items:center;justify-content:space-between;z-index:90;font-size:11px;}
+.save-status{display:flex;align-items:center;gap:6px;color:var(--green);font-weight:700;}
+.save-status.saving{color:var(--gold);}
+.save-dot{width:8px;height:8px;border-radius:50%;background:var(--green);}
+.save-dot.saving{background:var(--gold);animation:pulse .8s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.3;}}
+.save-time{color:var(--gray);}
+
+.bnav{position:fixed;bottom:0;left:0;right:0;background:var(--navy2);border-top:2px solid var(--border);display:flex;z-index:100;}
+.nb{flex:1;padding:8px 2px 6px;display:flex;flex-direction:column;align-items:center;gap:1px;cursor:pointer;border:none;background:none;color:var(--gray);font-size:9px;font-family:inherit;}
+.nb.active{color:var(--gold);}
+.nb .ic{font-size:18px;}
+
+.toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--green);color:#0d1f3c;padding:10px 22px;border-radius:20px;font-weight:700;font-size:13px;opacity:0;transition:all .3s;pointer-events:none;z-index:999;white-space:nowrap;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+.empty{text-align:center;color:var(--gray);padding:28px;font-size:13px;}
+.row2{display:flex;gap:8px;}.row2>*{flex:1;}
+.setting-value{font-size:15px;color:var(--gold);font-weight:700;padding:10px 14px;background:var(--navy);border-radius:10px;border:1px solid var(--border);}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="hrow">
+    <div class="logo">佐野</div>
+    <div class="htitle">
+      <h1>SANO CLUB チェック表</h1>
+      <p>コーチ用 練習チェックシート</p>
+    </div>
+    <div class="coach-badge" id="headerCoach">👤 --</div>
+  </div>
+</header>
+
+<div class="tabs">
+  <button class="tab active" onclick="showTab('practice',this)">🏋️ 練習</button>
+  <button class="tab" onclick="showTab('players',this)">👤 選手</button>
+  <button class="tab" onclick="showTab('items',this)">⚙️ 項目</button>
+  <button class="tab" onclick="showTab('settings',this)">🔧 設定</button>
+</div>
+
+<!-- 練習 -->
+<div id="sec-practice" class="section active">
+  <div class="card">
+    <div class="row2">
+      <div>
+        <div class="card-title">📅 日付</div>
+        <input type="date" id="date-p" onchange="autoSave()">
+      </div>
+      <div>
+        <div class="card-title">👤 担当コーチ</div>
+        <div class="setting-value" id="coachDisplay">未設定</div>
+      </div>
+    </div>
+  </div>
+  <div class="legend">
+    <div class="leg"><div class="leg-dot" style="background:var(--purple);color:#fff">◎</div>かなりできた</div>
+    <div class="leg"><div class="leg-dot" style="background:var(--gold);color:#0d1f3c">○</div>できた</div>
+    <div class="leg"><div class="leg-dot" style="background:var(--blue);color:#fff">△</div>意識あり</div>
+    <div class="leg"><div class="leg-dot" style="background:var(--red);color:#fff">×</div>できてない</div>
+  </div>
+  <div id="players-practice"></div>
+  <button class="btn btn-green" onclick="sendLine()">📤 LINE送信</button>
+  <button class="btn btn-outline" onclick="exportHTML()">💾 バックアップ（HTMLダウンロード）</button>
+</div>
+
+<!-- 選手管理 -->
+<div id="sec-players" class="section">
+  <p class="sec-title">👤 選手管理</p>
+  <div class="add-form">
+    <input type="text" id="newName" placeholder="名前（例：山田 太郎）" style="flex:2">
+    <select id="newGrade" style="width:auto;flex:1">
+      <option value="1">1年生</option><option value="2">2年生</option>
+      <option value="3">3年生</option><option value="4">4年生</option>
+      <option value="5" selected>5年生</option><option value="6">6年生</option>
+    </select>
+    <button class="add-btn" onclick="addPlayer()">＋追加</button>
+  </div>
+  <div id="playerList"></div>
+</div>
+
+<!-- 項目設定 -->
+<div id="sec-items" class="section">
+  <p class="sec-title">⚙️ 項目の編集・追加</p>
+  <div class="item-block">
+    <div class="item-block-header">🏋️ 練習チェック項目</div>
+    <div id="practice-item-list"></div>
+  </div>
+  <div class="card">
+    <div class="card-title">➕ 新しい項目を追加</div>
+    <input type="text" id="newItemLabel" placeholder="項目名" style="margin-bottom:8px">
+    <button class="add-btn" style="width:100%" onclick="addItem()">＋ 追加する</button>
+  </div>
+</div>
+
+<!-- 設定 -->
+<div id="sec-settings" class="section">
+  <p class="sec-title">🔧 設定</p>
+  <div class="card">
+    <div class="card-title">👤 コーチ名登録</div>
+    <p style="font-size:11px;color:var(--text2);margin-bottom:10px">登録すると毎回自動表示されます</p>
+    <div style="margin-bottom:10px">
+      <div style="font-size:11px;color:var(--gray);margin-bottom:4px">現在のコーチ名</div>
+      <div class="setting-value" id="currentCoachName">未設定</div>
+    </div>
+    <input type="text" id="coachInput" placeholder="コーチ名を入力（例：ふみ）" style="margin-bottom:8px">
+    <button class="btn btn-gold" onclick="saveCoach()">💾 コーチ名を保存</button>
+  </div>
+  <div class="card">
+    <div class="card-title">💾 バックアップ</div>
+    <p style="font-size:12px;color:var(--text2);line-height:1.8;margin-bottom:8px">
+      データはlocalStorageに自動保存されます。<br>
+      念のため定期的にHTMLバックアップを取ることをおすすめします。
+    </p>
+    <button class="btn btn-outline" onclick="exportHTML()">💾 バックアップ（HTMLダウンロード）</button>
+  </div>
+  <div class="card">
+    <div class="card-title">🗑️ データリセット</div>
+    <p style="font-size:12px;color:var(--text2);margin-bottom:8px">すべてのデータを削除します（取り消せません）</p>
+    <button class="btn" style="background:var(--red);color:#fff;margin-top:0" onclick="resetData()">⚠️ データをリセット</button>
+  </div>
+</div>
+
+<!-- 自動保存バー -->
+<div class="save-bar">
+  <div class="save-status" id="saveStatus">
+    <div class="save-dot" id="saveDot"></div>
+    <span id="saveStatusText">自動保存済み</span>
+  </div>
+  <div class="save-time" id="saveTime">--</div>
+</div>
+
+<nav class="bnav">
+  <button class="nb active" onclick="showTab('practice',this)"><span class="ic">🏋️</span>練習</button>
+  <button class="nb" onclick="showTab('players',this)"><span class="ic">👤</span>選手</button>
+  <button class="nb" onclick="showTab('items',this)"><span class="ic">⚙️</span>項目</button>
+  <button class="nb" onclick="showTab('settings',this)"><span class="ic">🔧</span>設定</button>
+</nav>
+<div class="toast" id="toast"></div>
+
+<script>
+const LS_KEY = 'sano_checklist_v2';
+const SYMS = ['◎','○','△','×'];
+const SYM_CLS = {'◎':'s-maru2','○':'s-maru','△':'s-sankaku','×':'s-batsu'};
+const POINTS = {'◎':3,'○':2,'△':1,'×':0};
+const DEFAULT_PRACTICE = ['声','話を聞く','集中','切替','思いやり','全力'];
+
+let coachName = '', players = [], practiceItems = [], scores = {practice:{}};
+let saveTimer = null;
+
+// ===== localStorage =====
+function autoSave() {
+  setSavingUI();
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => {
+    try {
+      localStorage.setItem(LS_KEY, JSON.stringify({coachName, players, practiceItems, scores}));
+      setSavedUI();
+    } catch(e) {
+      showToast('⚠ 保存失敗（容量不足の可能性）');
+    }
+  }, 400);
+}
+
+function loadFromLS() {
+  try {
+    const raw = localStorage.getItem(LS_KEY);
+    if (raw) {
+      const d = JSON.parse(raw);
+      coachName     = d.coachName     || '';
+      players       = d.players       || getDefaultPlayers();
+      practiceItems = d.practiceItems || [...DEFAULT_PRACTICE];
+      scores        = d.scores        || {practice:{}};
+      return;
+    }
+  } catch(e) {}
+  coachName = ''; players = getDefaultPlayers();
+  practiceItems = [...DEFAULT_PRACTICE]; scores = {practice:{}};
+}
+
+function getDefaultPlayers() {
+  return [
+    {id:'p1',name:'阿部　蒼太',grade:6},{id:'p2',name:'岩田　圭大郎',grade:5},
+    {id:'p3',name:'岩田　壮大郎',grade:5},{id:'p4',name:'鈴木　奏都',grade:5},
+    {id:'p5',name:'渡邊　結仁',grade:5},{id:'p6',name:'高橋　立希',grade:5},
+    {id:'p7',name:'浦野　壱地',grade:5},{id:'p8',name:'渡邊　圭',grade:3},
+    {id:'p9',name:'阿部　蒼',grade:4}
+  ];
+}
+
+function setSavingUI() {
+  const dot = document.getElementById('saveDot');
+  const txt = document.getElementById('saveStatusText');
+  const status = document.getElementById('saveStatus');
+  dot.classList.add('saving'); status.classList.add('saving');
+  txt.textContent = '保存中...';
+}
+
+function setSavedUI() {
+  const dot = document.getElementById('saveDot');
+  const txt = document.getElementById('saveStatusText');
+  const status = document.getElementById('saveStatus');
+  dot.classList.remove('saving'); status.classList.remove('saving');
+  txt.textContent = '自動保存済み';
+  const now = new Date();
+  document.getElementById('saveTime').textContent =
+    `最終保存 ${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}:${now.getSeconds().toString().padStart(2,'0')}`;
+}
+
+// ===== バックアップ =====
+function exportHTML() {
+  const data = {coachName, players, practiceItems, scores};
+  const json = JSON.stringify(data);
+  const script = `<script id="backup-data" type="application/json">\n${json}\n<\/script>`;
+  const html = document.documentElement.outerHTML.replace('</body>', script + '</body>');
+  const blob = new Blob([html], {type:'text/html'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `sano_checklist_backup_${new Date().toISOString().slice(0,10)}.html`;
+  a.click();
+  showToast('📦 バックアップを保存しました');
+}
+
+// ===== タブ =====
+function showTab(name, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab,.nb').forEach(b => b.classList.remove('active'));
+  document.getElementById('sec-' + name).classList.add('active');
+  btn.classList.add('active');
+  if (name === 'settings') refreshSettingsUI();
+  if (name === 'items') renderItemSettings();
+  if (name === 'players') renderPlayerList();
+}
+
+// ===== コーチ名 =====
+function saveCoach() {
+  const val = document.getElementById('coachInput').value.trim();
+  if (!val) { showToast('⚠ コーチ名を入力してください'); return; }
+  coachName = val;
+  refreshCoachUI();
+  document.getElementById('coachInput').value = '';
+  autoSave();
+  showToast(`✅「${val}」を登録しました`);
+}
+
+function refreshCoachUI() {
+  const d = coachName || '未設定';
+  document.getElementById('coachDisplay').textContent = d;
+  document.getElementById('headerCoach').textContent = '👤 ' + d;
+  const el = document.getElementById('currentCoachName');
+  if (el) el.textContent = d;
+}
+
+function refreshSettingsUI() {
+  document.getElementById('currentCoachName').textContent = coachName || '未設定';
+  document.getElementById('coachInput').value = '';
+}
+
+// ===== チェックシート =====
+function renderCheckSheet() {
+  const container = document.getElementById('players-practice');
+  container.innerHTML = '';
+  if (!players.length) { container.innerHTML = '<div class="empty">👤 「選手」タブから選手を登録してください</div>'; return; }
+  if (!practiceItems.length) { container.innerHTML = '<div class="empty">⚙️ 「項目」タブからチェック項目を追加してください</div>'; return; }
+  players.forEach(p => {
+    if (!scores.practice[p.id]) scores.practice[p.id] = {};
+    const total = calcTotal(p.id);
+    const block = document.createElement('div');
+    block.className = 'player-block'; block.id = `blk-${p.id}`;
+    block.innerHTML = `
+      <div class="player-header">
+        <div class="pava">${p.name.trim()[0]}</div>
+        <div style="flex:1">
+          <div class="player-name-text">${p.name}</div>
+          <div class="player-grade-text">${p.grade}年生</div>
+        </div>
+        <div class="player-total" id="tot-${p.id}">${total !== null ? total + '%' : '--'}<span> 総合</span></div>
+      </div>
+      <div class="check-grid">
+        ${practiceItems.map((item, idx) => `
+          <div class="check-row">
+            <div class="check-label">${item}</div>
+            <div class="score-btns">
+              ${SYMS.map(s => `<button class="sb ${scores.practice[p.id][idx] === s ? SYM_CLS[s] : ''}" onclick="setSym('${p.id}',${idx},'${s}')">${s}</button>`).join('')}
+            </div>
+          </div>`).join('')}
+      </div>
+      <div class="comment-row">
+        <textarea placeholder="コメント" onchange="setComment('${p.id}',this.value)">${scores.practice[p.id]._comment || ''}</textarea>
+      </div>`;
+    container.appendChild(block);
+  });
+}
+
+function setSym(pid, idx, sym) {
+  if (!scores.practice[pid]) scores.practice[pid] = {};
+  scores.practice[pid][idx] = scores.practice[pid][idx] === sym ? undefined : sym;
+  const block = document.getElementById(`blk-${pid}`);
+  block.querySelectorAll('.check-row')[idx].querySelectorAll('.sb').forEach(b => {
+    b.className = 'sb';
+    if (scores.practice[pid][idx] === b.textContent.trim()) b.classList.add(SYM_CLS[b.textContent.trim()]);
+  });
+  document.getElementById(`tot-${pid}`).innerHTML = `${calcTotal(pid) !== null ? calcTotal(pid) + '%' : '--'}<span> 総合</span>`;
+  autoSave();
+}
+
+function setComment(pid, val) {
+  if (!scores.practice[pid]) scores.practice[pid] = {};
+  scores.practice[pid]._comment = val;
+  autoSave();
+}
+
+function calcTotal(pid) {
+  const sc = scores.practice[pid] || {};
+  let total = 0, n = 0;
+  for (let i = 0; i < practiceItems.length; i++) {
+    if (sc[i] !== undefined) { total += POINTS[sc[i]]; n++; }
+  }
+  return n === 0 ? null : Math.round(total / (n * 3) * 100);
+}
+
+// ===== LINE送信 =====
+function sendLine() {
+  const date = document.getElementById('date-p').value;
+  const coach = coachName || '未設定';
+  let text = `📅 ${date}　担当：${coach}\n━━━━━━━━━━━━━━\n\n`;
+  players.forEach(p => {
+    const sc = scores.practice[p.id] || {};
+    text += `【${p.name}】${p.grade}年\n`;
+    practiceItems.forEach((item, i) => { text += `  ${item}：${sc[i] || '-'}\n`; });
+    text += `  総合：${calcTotal(p.id) !== null ? calcTotal(p.id) + '%' : '未評価'}\n`;
+    const comment = (sc._comment || '').trim();
+    if (comment) text += `  💬 ${comment}\n`;
+    text += '\n';
+  });
+  text += '━━━━━━━━━━━━━━\n【集計用】\n';
+  players.forEach(p => {
+    text += `${p.name}｜${calcTotal(p.id) !== null ? calcTotal(p.id) + '%' : '未評価'}\n`;
+  });
+  navigator.clipboard.writeText(text).then(() => {
+    showToast('📤 コピーしました！LINEに貼り付けてください');
+  }).catch(() => { alert(text); });
+}
+
+// ===== 選手管理 =====
+function renderPlayerList(editId = null) {
+  const list = document.getElementById('playerList');
+  list.innerHTML = '';
+  if (!players.length) { list.innerHTML = '<div class="empty">まだ選手が登録されていません</div>'; return; }
+  players.forEach(p => {
+    const div = document.createElement('div'); div.className = 'pcard';
+    if (editId === p.id) {
+      div.innerHTML = `<div class="pava">${p.name.trim()[0]}</div>
+        <div class="pedit-form">
+          <input type="text" id="en-${p.id}" value="${p.name}">
+          <select id="eg-${p.id}" style="width:auto">${[1,2,3,4,5,6].map(g => `<option value="${g}"${p.grade===g?' selected':''}>${g}年</option>`).join('')}</select>
+          <button class="save-edit-btn" onclick="saveEditPlayer('${p.id}')">保存</button>
+          <button class="cancel-edit-btn" onclick="renderPlayerList()">取消</button>
+        </div>`;
+    } else {
+      div.innerHTML = `<div class="pava">${p.name.trim()[0]}</div>
+        <div class="pcard-info"><div class="pcard-name">${p.name}</div><div class="pcard-grade">${p.grade}年生</div></div>
+        <button class="edit-btn" onclick="renderPlayerList('${p.id}')">✏️編集</button>
+        <button class="del-btn" onclick="deletePlayer('${p.id}')">削除</button>`;
+    }
+    list.appendChild(div);
+  });
+}
+
+function addPlayer() {
+  const name = document.getElementById('newName').value.trim();
+  const grade = parseInt(document.getElementById('newGrade').value);
+  if (!name) { showToast('⚠ 名前を入力してください'); return; }
+  if (players.find(p => p.name === name)) { showToast('⚠ 同じ名前が既にいます'); return; }
+  players.push({id: 'p' + Date.now(), name, grade});
+  document.getElementById('newName').value = '';
+  renderPlayerList(); renderCheckSheet(); autoSave();
+  showToast(`✅ ${name} を追加しました`);
+}
+
+function saveEditPlayer(id) {
+  const name = document.getElementById('en-' + id).value.trim();
+  const grade = parseInt(document.getElementById('eg-' + id).value);
+  if (!name) { showToast('⚠ 名前を入力してください'); return; }
+  if (players.find(p => p.name === name && p.id !== id)) { showToast('⚠ 同じ名前が既にいます'); return; }
+  const p = players.find(p => p.id === id); p.name = name; p.grade = grade;
+  renderPlayerList(); renderCheckSheet(); autoSave();
+  showToast(`✅ ${name} に更新しました`);
+}
+
+function deletePlayer(id) {
+  if (!confirm('この選手を削除しますか？')) return;
+  players = players.filter(p => p.id !== id);
+  renderPlayerList(); renderCheckSheet(); autoSave();
+  showToast('削除しました');
+}
+
+// ===== 項目設定 =====
+function renderItemSettings(editKey = null) {
+  const container = document.getElementById('practice-item-list');
+  container.innerHTML = '';
+  if (!practiceItems.length) { container.innerHTML = '<div class="empty" style="padding:12px">項目なし</div>'; return; }
+  practiceItems.forEach((item, idx) => {
+    const key = `practice-${idx}`;
+    if (editKey === key) {
+      const div = document.createElement('div'); div.className = 'item-edit-form';
+      div.innerHTML = `<div style="font-size:11px;color:var(--gray);font-weight:700">項目名を編集</div>
+        <input type="text" id="ei-${key}" value="${item}">
+        <div class="item-edit-btns">
+          <button class="save-edit-btn" onclick="saveItem(${idx},'${key}')">💾 保存</button>
+          <button class="cancel-edit-btn" onclick="renderItemSettings()">取消</button>
+        </div>`;
+      container.appendChild(div);
+    } else {
+      const div = document.createElement('div'); div.className = 'item-row';
+      div.innerHTML = `<div class="item-label-text">${item}</div>
+        <button class="edit-btn" onclick="renderItemSettings('${key}')">✏️</button>
+        <button class="del-btn" onclick="deleteItem(${idx})">削除</button>`;
+      container.appendChild(div);
+    }
+  });
+}
+
+function saveItem(idx, key) {
+  const val = document.getElementById('ei-' + key).value.trim();
+  if (!val) { showToast('⚠ 項目名を入力してください'); return; }
+  practiceItems[idx] = val;
+  renderItemSettings(); renderCheckSheet(); autoSave();
+  showToast(`✅「${val}」に更新しました`);
+}
+
+function deleteItem(idx) {
+  if (!confirm(`「${practiceItems[idx]}」を削除しますか？`)) return;
+  practiceItems.splice(idx, 1);
+  renderItemSettings(); renderCheckSheet(); autoSave();
+  showToast('削除しました');
+}
+
+function addItem() {
+  const label = document.getElementById('newItemLabel').value.trim();
+  if (!label) { showToast('⚠ 項目名を入力してください'); return; }
+  practiceItems.push(label);
+  document.getElementById('newItemLabel').value = '';
+  renderItemSettings(); renderCheckSheet(); autoSave();
+  showToast(`✅「${label}」を追加しました`);
+}
+
+// ===== リセット =====
+function resetData() {
+  if (!confirm('全データを削除しますか？この操作は取り消せません。')) return;
+  localStorage.removeItem(LS_KEY);
+  location.reload();
+}
+
+// ===== TOAST =====
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ===== INIT =====
+window.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('date-p').value = new Date().toISOString().slice(0, 10);
+  loadFromLS();
+  refreshCoachUI();
+  renderCheckSheet();
+  renderPlayerList();
+  renderItemSettings();
+  setSavedUI();
+});
+</script>
+</body>
+</html>
